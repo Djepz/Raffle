@@ -1,0 +1,28 @@
+{
+  "name": "nextjs-smartcontract",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "magic-sdk": "^9.0.0",
+    "moralis": "^2.0.3",
+    "next": "12.2.5",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "react-moralis": "^1.4.1",
+    "web3uikit": "^0.1.159"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.10",
+    "eslint": "8.22.0",
+    "eslint-config-next": "12.2.5",
+    "hardhat": "^2.11.1",
+    "postcss": "^8.4.16",
+    "tailwindcss": "^3.1.8"
+  }
+}

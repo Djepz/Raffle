@@ -10,11 +10,8 @@ async function mockKeepers() {
     const txReceipt = await tx.wait(1);
     const requestId = txReceipt.events[1].args.id;
     console.log(`Performed upkeep with RequestId: ${requestId}`);
-    console.log(network.config.chainId);
     if (network.config.chainId == 31337) {
-      console.log("here");
       await mockVrf(requestId, raffle);
-      console.log("here1");
     }
   } else {
     console.log("No upkeep needed!");
@@ -22,13 +19,9 @@ async function mockKeepers() {
 }
 
 async function mockVrf(requestId, raffle) {
-  console.log("here3");
   const vrfCoordinator = await ethers.getContract("VRFCoordinatorV2Mock");
-  console.log("here4");
   await vrfCoordinator.fulfillRandomWords(requestId, raffle.address);
-  console.log("here5");
   const recentWinner = await raffle.getRecentWinner();
-  console.log("here6");
   console.log(`The winner is: ${recentWinner}`);
 }
 

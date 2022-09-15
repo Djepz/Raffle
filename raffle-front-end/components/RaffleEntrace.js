@@ -3,13 +3,27 @@ import { contractAddresses, abi } from "../constants";
 import { useMoralis, useWeb3Contract } from "react-moralis";
 import { useEffect, useState } from "react";
 import { useNotification } from "web3uikit";
-import { ethers } from "ethers";
+import { ethers, utils, provider } from "ethers";
 
 export default function RaffleEntrance() {
+  const provider = new ethers.providers.JsonRpcProvider(
+    process.env.RPC_PROVIDER
+  );
+
   const { Moralis, isWeb3Enabled, chainId: chainIdHex } = useMoralis();
   const chainId = parseInt(chainIdHex);
   const raffleAddress =
     chainId in contractAddresses ? contractAddresses[chainId][0] : null;
+
+  const filter = {
+    address: raffleAddress,
+    topics: [utils.id("WinnerPicked(address)")],
+  };
+
+  provider.once(filter, async () => {
+    const recentWinnerFromCall = await getRecentWinner();
+    setRecentWinner(recentWinnerFromCall);
+  });
 
   // State hooks
 
@@ -59,7 +73,6 @@ export default function RaffleEntrance() {
     const entranceFeeFromCall = (await getEntranceFee()).toString();
     const numPlayersFromCall = (await getNumberofPlayers()).toString();
     const recentWinnerFromCall = await getRecentWinner();
-    console.log(recentWinner);
     setEntranceFee(entranceFeeFromCall);
     setNumberOfPlayers(numPlayersFromCall);
     setRecentWinner(recentWinnerFromCall);
@@ -112,7 +125,15 @@ export default function RaffleEntrance() {
             Entrance Fee: {ethers.utils.formatUnits(entranceFee, "ether")} ETH
           </div>
           <div>The current number of players is: {numberOfPlayers}</div>
-          <div>The most previous winner was: {recentWinner}</div>
+          <div
+            {...async () =>
+              await getRecentWinner({
+                onSuccess: changeRecentWinner,
+                onError: (error) => console.log(error),
+              })}
+          >
+            The most previous winner was: {recentWinner}
+          </div>
         </>
       ) : (
         <div>Please connect to a supported chain </div>
